@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import Date from '../components/date';
-import { getSortedPostsData } from '../lib/posts';
+import { getSortedPostsData, getAllProjects, getAllTestimonials } from '../lib/posts';
 import Head from 'next/head';
 import Layout, { siteTitle } from '../components/layout';
 import utilStyles from '../styles/utils.module.css';
 import customStyles from '../styles/CustomHome.module.css';
 
-export default function Home({ allPostsData }) {
+export default function Home({ allPostsData, allProjects, allTestimonials }) {
   return (
     <Layout>
       <Head>
@@ -103,11 +103,98 @@ export default function Home({ allPostsData }) {
           </div>
         </section>
 
-        {/* NEW CONTACTS SECTION - Week 13 Assignment */}
+        {/* PROJECTS SECTION - Week 14 Assignment */}
+        <section className={customStyles.section} id="projects">
+          <h2 className={customStyles.sectionTitle}>Projects</h2>
+          <p style={{marginBottom: '1rem', color: '#666'}}>
+            Portfolio of web development projects
+          </p>
+          <div className="project-list">
+            <ul style={{listStyle: 'none', padding: 0}}>
+              {allProjects.map(({ id, title, technologies, status }) => (
+                <li key={id} style={{
+                  padding: '1rem',
+                  marginBottom: '0.5rem',
+                  background: '#f5f5f5',
+                  borderRadius: '8px',
+                  transition: 'background 0.2s'
+                }}>
+                  <Link href={`/projects/${id}`} style={{
+                    textDecoration: 'none',
+                    color: '#0070f3',
+                    display: 'block'
+                  }}>
+                    <strong style={{fontSize: '1.1rem'}}>
+                      {title}
+                    </strong>
+                    {technologies && (
+                      <span style={{color: '#666', fontSize: '0.9rem', marginLeft: '0.5rem'}}>
+                        - {technologies}
+                      </span>
+                    )}
+                    {status && (
+                      <span style={{
+                        color: status === 'Completed' ? '#22c55e' : '#f59e0b',
+                        fontSize: '0.85rem',
+                        marginLeft: '0.5rem',
+                        fontWeight: '500'
+                      }}>
+                        ({status})
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* TESTIMONIALS SECTION - Week 14 Assignment */}
+        <section className={customStyles.section} id="testimonials">
+          <h2 className={customStyles.sectionTitle}>Testimonials</h2>
+          <p style={{marginBottom: '1rem', color: '#666'}}>
+            Client feedback and reviews
+          </p>
+          <div className="testimonial-list">
+            <ul style={{listStyle: 'none', padding: 0}}>
+              {allTestimonials.map(({ id, title, client_name, company, rating }) => (
+                <li key={id} style={{
+                  padding: '1rem',
+                  marginBottom: '0.5rem',
+                  background: '#f5f5f5',
+                  borderRadius: '8px',
+                  transition: 'background 0.2s'
+                }}>
+                  <Link href={`/testimonials/${id}`} style={{
+                    textDecoration: 'none',
+                    color: '#0070f3',
+                    display: 'block'
+                  }}>
+                    <strong style={{fontSize: '1.1rem'}}>
+                      {client_name}
+                    </strong>
+                    {company && (
+                      <span style={{color: '#666', fontSize: '0.9rem', marginLeft: '0.5rem'}}>
+                        - {company}
+                      </span>
+                    )}
+                    {rating && (
+                      <span style={{color: '#fbbf24', marginLeft: '0.5rem'}}>
+                        {'★'.repeat(parseInt(rating))}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* CONTACTS SECTION - Week 13 Assignment */}
         <section className={customStyles.section} id="contacts">
           <h2 className={customStyles.sectionTitle}>Contact Directory</h2>
           <p style={{marginBottom: '1rem', color: '#666'}}>
-            Week 13 Assignment: WordPress Custom Post Types with SQL Queries
+            Professional contacts and connections
           </p>
           <div className="contact-list">
             <ul style={{listStyle: 'none', padding: 0}}>
@@ -145,10 +232,17 @@ export default function Home({ allPostsData }) {
 }
 
 export async function getStaticProps() {
+  // Fetch data from all 3 WordPress REST API endpoints
   const allPostsData = await getSortedPostsData();
+  const allProjects = await getAllProjects();
+  const allTestimonials = await getAllTestimonials();
+  
   return {
     props: {
       allPostsData,
+      allProjects,
+      allTestimonials,
     },
+    revalidate: 10, // ISR: Regenerate page every 10 seconds if there's a request
   };
 }
