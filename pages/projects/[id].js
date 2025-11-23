@@ -57,9 +57,11 @@ export default function Project({ projectData }) {
               <h3 style={{color: '#666', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem'}}>
                 Description:
               </h3>
-              <p style={{color: '#333', lineHeight: '1.6'}}>
-                {projectData.description}
-              </p>
+              {/* CHANGED: Using dangerouslySetInnerHTML to render HTML content from WordPress */}
+              <div 
+                style={{color: '#333', lineHeight: '1.6'}}
+                dangerouslySetInnerHTML={{ __html: projectData.description }}
+              />
             </div>
           )}
           

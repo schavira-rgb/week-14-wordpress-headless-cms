@@ -50,22 +50,24 @@ export default function Testimonial({ testimonialData }) {
         )}
         
         <div style={{
-          background: '#f9f9f9',
+          background: '#f9f9fa',
           padding: '2rem',
           borderRadius: '8px',
           marginBottom: '2rem',
           borderLeft: '4px solid #0070f3'
         }}>
           {testimonialData.quote && (
-            <blockquote style={{
-              margin: 0,
-              fontSize: '1.1rem',
-              lineHeight: '1.8',
-              color: '#333',
-              fontStyle: 'italic'
-            }}>
-              "{testimonialData.quote}"
-            </blockquote>
+            // CHANGED: Using dangerouslySetInnerHTML to render HTML content from WordPress
+            <blockquote 
+              style={{
+                margin: 0,
+                fontSize: '1.1rem',
+                lineHeight: '1.8',
+                color: '#333',
+                fontStyle: 'italic'
+              }}
+              dangerouslySetInnerHTML={{ __html: `"${testimonialData.quote}"` }}
+            />
           )}
         </div>
         
