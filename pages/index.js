@@ -1,37 +1,53 @@
 import Link from 'next/link';
-import Date from '../components/date';
 import { getSortedPostsData, getAllProjects, getAllTestimonials } from '../lib/posts';
 import Head from 'next/head';
 import Layout, { siteTitle } from '../components/layout';
-import utilStyles from '../styles/utils.module.css';
 import customStyles from '../styles/CustomHome.module.css';
 
 export default function Home({ allPostsData, allProjects, allTestimonials }) {
+  // Find Snippet Manager as featured project
+  const featuredProject = allProjects.find(project => 
+    project.title.toLowerCase().includes('snippet manager')
+  ) || allProjects[0];
+  
+  // Remove featured from examples
+  const exampleProjects = allProjects.filter(project => project.id !== featuredProject?.id);
+
   return (
     <Layout>
       <Head>
         <title>{siteTitle}</title>
       </Head>
       
-      <div className={customStyles.container}>
-        <section className={customStyles.heroSection}>
-          <div className={customStyles.profileImageContainer}>
-            <img
-              src="/images/profile.jpg"
-              className={customStyles.profileImage}
-              alt="Estevan Chavira"
-              width={200}
-              height={200}
-            />
-          </div>
-          <h1 className={customStyles.heroTitle}>Estevan Chavira</h1>
-          <p className={customStyles.heroSubtitle}>Cybersecurity Student & Web Developer</p>
-          <a href="#contacts" className={customStyles.blogLink}>
-            View Contact Directory
-          </a>
-        </section>
+      {/* ========== OUTSIDE CONTAINER ========== */}
+      
+      {/* HERO SECTION - Full Width */}
+      <section className={customStyles.heroSection}>
+        <div className={customStyles.profileImageContainer}>
+          <img
+            src="/images/profile.jpg"
+            className={customStyles.profileImage}
+            alt="Estevan Chavira"
+            width={200}
+            height={200}
+          />
+        </div>
+        <h1 className={customStyles.heroTitle}>Estevan Chavira</h1>
+        <p className={customStyles.heroSubtitle}>Cybersecurity Student & Web Developer</p>
+      </section>
 
-        <section className={customStyles.section}>
+      {/* NAVBAR - Full Width, Sticky */}
+      <nav className={customStyles.navbar}>
+        <a href="#about" className={customStyles.navLink}>About</a>
+        <a href="#projects" className={customStyles.navLink}>Projects</a>
+        <a href="#testimonials" className={customStyles.navLink}>Testimonials</a>
+        <a href="#contacts" className={customStyles.navLink}>Contacts</a>
+      </nav>
+
+      {/* ABOUT & SKILLS - Full Width, 2 Columns */}
+      <div className={customStyles.twoColumnSection} id="about">
+        {/* About - Left Column */}
+        <section className={customStyles.columnCard}>
           <h2 className={customStyles.sectionTitle}>About</h2>
           <p className={customStyles.aboutText}>
             I'm a cybersecurity student at SRJC learning how technology works at every level. 
@@ -43,9 +59,10 @@ export default function Home({ allPostsData, allProjects, allTestimonials }) {
           </p>
         </section>
 
-        <section className={customStyles.section}>
+        {/* Skills - Right Column */}
+        <section className={customStyles.columnCard}>
           <h2 className={customStyles.sectionTitle}>Skills & Technologies</h2>
-          <div className={customStyles.skillsGrid}>
+          <div className={customStyles.skillsStack}>
             <div className={customStyles.skillCategory}>
               <h3 className={customStyles.skillCategoryTitle}>Security & Networking</h3>
               <ul className={customStyles.skillsList}>
@@ -74,156 +91,116 @@ export default function Home({ allPostsData, allProjects, allTestimonials }) {
             </div>
           </div>
         </section>
+      </div>
 
-        <section className={customStyles.section}>
-          <h2 className={customStyles.sectionTitle}>Education</h2>
-          <ul className={customStyles.educationList}>
-            <li className={customStyles.educationItem}>
-              <div className={customStyles.courseTitle}>Current Coursework (Fall 2025)</div>
-              <div className={customStyles.courseDescription}>
-                CS180.3 (Virtualization/Cloud Computing), CS55.13 (Server-Side Web Development), ETHS20 (Ethnic Studies)
-              </div>
-            </li>
-            <li className={customStyles.educationItem}>
-              <div className={customStyles.courseTitle}>Completed Certifications & Courses</div>
-              <div className={customStyles.courseDescription}>
-                Security+ Certification, Linux Administration 1 & 2, Python Programming, 
-                Networking Fundamentals (2 courses), Web Development (HTML/CSS)
-              </div>
-            </li>
-          </ul>
-        </section>
+      {/* ========== INSIDE CONTAINER ========== */}
+      <div className={customStyles.container}>
 
-        <section className={customStyles.section}>
-          <div className={customStyles.contactInfo}>
-            <h2 className={customStyles.sectionTitle}>Contact</h2>
-            <a href="mailto:schavira@bearcubs.santarosa.edu" className={customStyles.contactEmail}>
-              schavira@bearcubs.santarosa.edu
-            </a>
-          </div>
-        </section>
-
-        {/* PROJECTS SECTION - Week 14 Assignment */}
+        {/* PROJECTS SECTION */}
         <section className={customStyles.section} id="projects">
           <h2 className={customStyles.sectionTitle}>Projects</h2>
-          <p style={{marginBottom: '1rem', color: '#666'}}>
-            Portfolio of web development projects
-          </p>
-          <div className="project-list">
-            <ul style={{listStyle: 'none', padding: 0}}>
-              {allProjects.map(({ id, title, technologies, status }) => (
-                <li key={id} style={{
-                  padding: '1rem',
-                  marginBottom: '0.5rem',
-                  background: '#f5f5f5',
-                  borderRadius: '8px',
-                  transition: 'background 0.2s'
-                }}>
-                  <Link href={`/projects/${id}`} style={{
-                    textDecoration: 'none',
-                    color: '#0070f3',
-                    display: 'block'
-                  }}>
-                    <strong style={{fontSize: '1.1rem'}}>
-                      {title}
-                    </strong>
-                    {technologies && (
-                      <span style={{color: '#666', fontSize: '0.9rem', marginLeft: '0.5rem'}}>
-                        - {technologies}
-                      </span>
-                    )}
-                    {status && (
-                      <span style={{
-                        color: status === 'Completed' ? '#22c55e' : '#f59e0b',
-                        fontSize: '0.85rem',
-                        marginLeft: '0.5rem',
-                        fontWeight: '500'
-                      }}>
-                        ({status})
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <p className={customStyles.sectionSubtitle}>Portfolio of web development projects</p>
+          
+          {/* Featured Project */}
+          {featuredProject && (
+            <div className={customStyles.featuredProject}>
+              <span className={customStyles.featuredBadge}>Featured Project</span>
+              <Link href={`/projects/${featuredProject.id}`} className={customStyles.featuredLink}>
+                <h3 className={customStyles.featuredTitle}>{featuredProject.title}</h3>
+                <p className={customStyles.featuredDescription}>
+                  {featuredProject.description}
+                </p>
+                <div className={customStyles.featuredMeta}>
+                  {featuredProject.technologies && (
+                    <span className={customStyles.projectTech}>
+                      <strong>Tech:</strong> {featuredProject.technologies}
+                    </span>
+                  )}
+                  {featuredProject.status && (
+                    <span className={customStyles.statusBadge}>{featuredProject.status}</span>
+                  )}
+                </div>
+              </Link>
+            </div>
+          )}
+
+          {/* Other Projects Grid */}
+          {exampleProjects.length > 0 && (
+            <>
+              <h3 className={customStyles.subsectionTitle}>More Projects</h3>
+              <div className={customStyles.projectGrid}>
+                {exampleProjects.map(({ id, title, technologies, status }) => (
+                  <div key={id} className={customStyles.projectCard}>
+                    <Link href={`/projects/${id}`} className={customStyles.cardLink}>
+                      <h4 className={customStyles.cardTitle}>{title}</h4>
+                      {technologies && (
+                        <p className={customStyles.cardMeta}>{technologies}</p>
+                      )}
+                      {status && (
+                        <span className={customStyles.statusBadge}>{status}</span>
+                      )}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </section>
 
-        {/* TESTIMONIALS SECTION - Week 14 Assignment */}
+        {/* TESTIMONIALS SECTION */}
         <section className={customStyles.section} id="testimonials">
           <h2 className={customStyles.sectionTitle}>Testimonials</h2>
-          <p style={{marginBottom: '1rem', color: '#666'}}>
-            Client feedback and reviews
-          </p>
-          <div className="testimonial-list">
-            <ul style={{listStyle: 'none', padding: 0}}>
-              {allTestimonials.map(({ id, title, client_name, company, rating }) => (
-                <li key={id} style={{
-                  padding: '1rem',
-                  marginBottom: '0.5rem',
-                  background: '#f5f5f5',
-                  borderRadius: '8px',
-                  transition: 'background 0.2s'
-                }}>
-                  <Link href={`/testimonials/${id}`} style={{
-                    textDecoration: 'none',
-                    color: '#0070f3',
-                    display: 'block'
-                  }}>
-                    <strong style={{fontSize: '1.1rem'}}>
-                      {client_name}
-                    </strong>
-                    {company && (
-                      <span style={{color: '#666', fontSize: '0.9rem', marginLeft: '0.5rem'}}>
-                        - {company}
-                      </span>
-                    )}
-                    {rating && (
-                      <span style={{color: '#fbbf24', marginLeft: '0.5rem'}}>
-                        {'★'.repeat(parseInt(rating))}
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <p className={customStyles.sectionSubtitle}>Client feedback and reviews</p>
+          <div className={customStyles.testimonialGrid}>
+            {allTestimonials.map(({ id, client_name, company, rating, quote }) => (
+              <div key={id} className={customStyles.testimonialCard}>
+                <Link href={`/testimonials/${id}`} className={customStyles.cardLink}>
+                  <h4 className={customStyles.cardTitle}>{client_name}</h4>
+                  {company && (
+                    <p className={customStyles.cardMeta}>{company}</p>
+                  )}
+                  {rating && (
+                    <div className={customStyles.rating}>
+                      {'★'.repeat(parseInt(rating))}{'☆'.repeat(5 - parseInt(rating))}
+                    </div>
+                  )}
+                  {quote && (
+                    <p className={customStyles.quote}>
+                      "{quote.substring(0, 120)}..."
+                    </p>
+                  )}
+                </Link>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* CONTACTS SECTION - Week 13 Assignment */}
+        {/* CONTACTS SECTION */}
         <section className={customStyles.section} id="contacts">
           <h2 className={customStyles.sectionTitle}>Contact Directory</h2>
-          <p style={{marginBottom: '1rem', color: '#666'}}>
-            Professional contacts and connections
-          </p>
-          <div className="contact-list">
-            <ul style={{listStyle: 'none', padding: 0}}>
-              {allPostsData.map(({ id, name, first_name, last_name, company }) => (
-                <li key={id} style={{
-                  padding: '1rem',
-                  marginBottom: '0.5rem',
-                  background: '#f5f5f5',
-                  borderRadius: '8px',
-                  transition: 'background 0.2s'
-                }}>
-                  <Link href={`/${id}`} style={{
-                    textDecoration: 'none',
-                    color: '#0070f3',
-                    display: 'block'
-                  }}>
-                    <strong style={{fontSize: '1.1rem'}}>
-                      {first_name} {last_name}
-                    </strong>
-                    {company && (
-                      <span style={{color: '#666', fontSize: '0.9rem', marginLeft: '0.5rem'}}>
-                        - {company}
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <p className={customStyles.sectionSubtitle}>Professional contacts and connections</p>
+          <div className={customStyles.contactGrid}>
+            {allPostsData.map(({ id, first_name, last_name, company }) => (
+              <div key={id} className={customStyles.contactCard}>
+                <Link href={`/${id}`} className={customStyles.cardLink}>
+                  <h4 className={customStyles.cardTitle}>
+                    {first_name} {last_name}
+                  </h4>
+                  {company && (
+                    <p className={customStyles.cardMeta}>{company}</p>
+                  )}
+                </Link>
+              </div>
+            ))}
           </div>
+        </section>
+
+        {/* CONTACT INFO */}
+        <section className={customStyles.contactSection}>
+          <h2 className={customStyles.sectionTitle}>Get In Touch</h2>
+          <a href="mailto:schavira@bearcubs.santarosa.edu" className={customStyles.contactEmail}>
+            schavira@bearcubs.santarosa.edu
+          </a>
         </section>
 
       </div>
@@ -232,7 +209,6 @@ export default function Home({ allPostsData, allProjects, allTestimonials }) {
 }
 
 export async function getStaticProps() {
-  // Fetch data from all 3 WordPress REST API endpoints
   const allPostsData = await getSortedPostsData();
   const allProjects = await getAllProjects();
   const allTestimonials = await getAllTestimonials();
@@ -243,6 +219,6 @@ export async function getStaticProps() {
       allProjects,
       allTestimonials,
     },
-    revalidate: 10, // ISR: Regenerate page every 10 seconds if there's a request
+    revalidate: 10,
   };
 }
